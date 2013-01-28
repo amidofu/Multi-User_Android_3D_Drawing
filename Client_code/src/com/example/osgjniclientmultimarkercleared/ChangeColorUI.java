@@ -3,16 +3,13 @@ package com.example.osgjniclientmultimarkercleared;
 import nativeFunctions.NativeLib;
 import android.app.Dialog;
 import android.content.Context;
-//import android.content.DialogInterface;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
-//import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
-//import android.view.View.OnClickListener;
 public class ChangeColorUI extends Dialog implements OnTouchListener{
 
 	Button OK;

@@ -337,11 +337,9 @@ void osgMain::drawLine(osg::Vec3 NewPt)
 }
 void osgMain::createPipe(osg::Vec3 & pt1, osg::Vec3 & pt2, osg::Vec3 & pt3, osg::Vec3Array* shape,bool startPt,osg::ref_ptr<osg::Geode>  & currentLine)
 {
-	__android_log_print(ANDROID_LOG_ERROR,"jni client","create pipe");
     //shape must be at xy plane
     if(shape->size()<3)
     {
-    	__android_log_print(ANDROID_LOG_ERROR,"jni server","create pipe NOOOO");
     	return ;
     }
     osg::Vec3 v12=(pt1-pt2);
@@ -353,10 +351,8 @@ void osgMain::createPipe(osg::Vec3 & pt1, osg::Vec3 & pt2, osg::Vec3 & pt3, osg:
     for(int i=0;i<shape->size();i++)
         center=center+shape->at(i);
     center=center/(float)shape->size();
-    __android_log_print(ANDROID_LOG_ERROR,"jni client","create pipe OK1");
     if(startPt)
     {
-    	 __android_log_print(ANDROID_LOG_ERROR,"jni client","create pipe OK2");
         startShape=new osg::Vec3Array;
 
         osg::Vec3 posZ(0.0,0.0,1.0);
@@ -368,7 +364,6 @@ void osgMain::createPipe(osg::Vec3 & pt1, osg::Vec3 & pt2, osg::Vec3 & pt3, osg:
         mat.makeRotate(rotAngle,rotAxis);
         for(int i=0;i<shape->size();i++)
             startShape->push_back(mat.preMult(shape->at(i)-center)+pt1);
-        __android_log_print(ANDROID_LOG_ERROR,"jni client","create pipe OK3");
     }
     else
         startShape=shape;
@@ -385,7 +380,6 @@ void osgMain::createPipe(osg::Vec3 & pt1, osg::Vec3 & pt2, osg::Vec3 & pt3, osg:
     shapeDir.normalize();
     if(shapeDir*(-v12)<0.0)
         shapeDir=-shapeDir;
-    __android_log_print(ANDROID_LOG_ERROR,"jni client","create pipe OK3");
     osg::ref_ptr<osg::Vec3Array> p2Shape=new osg::Vec3Array;
     osg::Vec3 rotAxis=shapeDir^p2Dir;
     float rotAngle=(float)acos((double)(shapeDir*p2Dir));
@@ -399,7 +393,6 @@ void osgMain::createPipe(osg::Vec3 & pt1, osg::Vec3 & pt2, osg::Vec3 & pt3, osg:
     for(int i=0;i<startShape->size();i++)
         p2Shape->push_back(mat.preMult(startShape->at(i)-center)+center+trans);
 
-    __android_log_print(ANDROID_LOG_ERROR,"jni client","create pipe OK4");
     osg::ref_ptr<osg::Geometry> pipe=new osg::Geometry;
 
     osg::ref_ptr<osg::Vec3Array> allVerts=new osg::Vec3Array;
@@ -413,7 +406,6 @@ void osgMain::createPipe(osg::Vec3 & pt1, osg::Vec3 & pt2, osg::Vec3 & pt3, osg:
         allVerts->push_back(p2Shape->at((i+1)%numVerts));
         allVerts->push_back(p2Shape->at(i));
     }
-    __android_log_print(ANDROID_LOG_ERROR,"jni client","create pipe OK5");
     pipe->setVertexArray(allVerts.get());
 
     osg::ref_ptr<osg::DrawArrays> array=new osg::DrawArrays(GL_TRIANGLES,0,allVerts->size());
@@ -421,7 +413,6 @@ void osgMain::createPipe(osg::Vec3 & pt1, osg::Vec3 & pt2, osg::Vec3 & pt3, osg:
     osgUtil::SmoothingVisitor::smooth(*pipe);
     for(int i=0;i<numVerts;i++)
         shape->at(i)=p2Shape->at(i);
-    __android_log_print(ANDROID_LOG_ERROR,"jni client","create pipe OK6");
     if(startPt)
     {
         currentLine->addDrawable(pipe);

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+       
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/MoveForward"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Move Forward" />
+
+        <Button
+            android:id="@+id/MoveBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Move Back" />
+
+
+                
+                <Button
+            android:id="@+id/toggleDrawLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TLine" />
+
+        <Button
+            android:id="@+id/NewPt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NewPt" />
+        
+                        <Button
+                    android:id="@+id/addBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="add Box" />
+
+                        <Button
+                            android:id="@+id/setColor"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Set Color" />
+        
+        </LinearLayout>
+            <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/toggleEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="T Edit" />
+
+        <Button
+            android:id="@+id/TAxis"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Axis X" />
+
+
+        <Button
+            android:id="@+id/EditType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rotate" />
+        
+        <Button
+            android:id="@+id/DeleteGeometry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete Geom" />
+        
+        
+        <Button
+            android:id="@+id/saveSMarker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="save SMarker" />
+
+        <Button
+            android:id="@+id/ChangeColor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Change Color" />
+
+    </LinearLayout>
+    
+    <com.example.osgjniclientmultimarker.MyGLSurfaceView
+        android:id="@+id/MyGLSurfaceView2"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"/>
+
+</LinearLayout>

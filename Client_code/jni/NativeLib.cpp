@@ -1,7 +1,6 @@
 #include "nativeFunctions_NativeLib.h"
 #include "MarkerFinder.h"
 #include "mCV.h"
-//#include "MarkerlessFunc.h"
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/features2d/features2d.hpp>
@@ -18,32 +17,10 @@ CVStuff mCV;
 osg::Vec3 pose;
 osg::Matrixd Correction;//rotate the coordinate system to make OpenCV coordinate system be consistent with OSG
 osg::Matrixd MarkerRot;//pass marker's rotation to OSG
-//bool FirstPose;
 MarkerRectangle* MR;
 MSMap mMSM;//store marker info
 std::string storagePath;
 std::string OSGStoragePath;
-//markerless part
-//#define MARKERLESS_PART
-//KeyFrame testKF;
-/*
-double sigma1=1.0;
-double sigma2=0.0;
-int fastTh=100;
-double binTh=100.0;
-TermCriteria criteria(TermCriteria::COUNT+TermCriteria::EPS,30,10E-4);
-Size GaussSize(5,5);
-Size winSize(11,11);
-double derivLambda = 0.5;
-double minEigTh=10E-4;
-int LKFlag=0;
-double FundConfi=0.99;
-double FundDist=3.0;
-int maxLevel=3;
-
-
-//end markerless
- */
 bool MarkerInsight=false;
 bool useSensor=false;
 #define QUATLERP
@@ -52,8 +29,6 @@ std::vector<osg::Quat> quats;
 std::vector<osg::Vec3> Vtrans;
 float lerpRatio=0.5;
 #endif
-//#define CHANGE_COLOR
-//#define CHECK_SELECT
 
 void showcamMat()
 {
@@ -666,22 +641,7 @@ JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_changeColor
 		osgmain.changeColorForCurrentSelectGeode();
 	}
 }
-/*
-JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_FindFeatures
-  (JNIEnv *, jclass, jlong addrGray, jlong addrRgba)
-{
 
-    Mat* pMatGr=(Mat*)addrGray;
-    Mat* pMatRgb=(Mat*)addrRgba;
-    vector<KeyPoint> v;
-
-    FastFeatureDetector detector(50);
-    detector.detect(*pMatGr, v);
-    for( size_t i = 0; i < v.size(); i++ )
-        circle(*pMatRgb, Point(v[i].pt.x, v[i].pt.y), 10, Scalar(255,0,0,255));
-
-}
-*/
 JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_MarkerDetection
 (JNIEnv *, jclass, jlong addrRgba, jint height, jint width, jint RectLimit)
 {
@@ -881,7 +841,6 @@ JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_InitialozeOpenCVGlobalVarB
 
 		loadMarkers(storagePath);
 		initGlobalVars();
-		//FirstPose=true;
 
 #ifdef QUATLERP
 	quats.resize(2);

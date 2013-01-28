@@ -10,8 +10,6 @@ public class NativeLib {
 	public static native void getServerIPByDomainNameAndStartClient(String IP);
 	//use real server's IP address
 	public static native void getServerIPandStartClient(String IP);
-	//public static native void sendMsg();
-	//public static native void recvMsg();
 	//start connection
 	public static native void connectToServer();
 	//public static native void sendAcceleration(float x, float y, float z);
@@ -32,8 +30,6 @@ public class NativeLib {
     //used by gyro
     public static native void sendRotation(float axisX, float axisY, float axisZ, float angle);
     public static native void sendKeyDown(int key);
-    //public static native void sendGeometry();
-    //public static native void recvGeometry();
     //send all geometries to the other user
     public static native void sendMainScene();
     //toggle drawing line mode
@@ -42,7 +38,6 @@ public class NativeLib {
     public static native void getNewPt();
     //toggle geometry modification mode
     public static native boolean toggleEdit();
-    //public static native void EditR(int axis,float amount);
     //send geometry modification command
     /**
      * 

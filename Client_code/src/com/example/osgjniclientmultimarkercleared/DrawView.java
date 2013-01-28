@@ -2,14 +2,9 @@ package com.example.osgjniclientmultimarkercleared;
 
 import android.content.Context;
 import android.graphics.Canvas;
-//import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-//import android.hardware.Camera.Size;
 import android.util.AttributeSet;
-//import android.util.Log;
-//import android.view.SurfaceHolder;
-//import android.view.SurfaceView;
 import android.view.View;
 
 //used to display current selected color

@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #ifndef AUXFILE_H
 #define AUXFILE_H
-//struct SCamInfo
 class ScamInfo
 {
 public:
@@ -14,7 +13,6 @@ public:
 	float rotz;
 	float rotw;
 
-	//10 members so far
 	bool startSendNode;
 	unsigned int numBytesofNode;
 

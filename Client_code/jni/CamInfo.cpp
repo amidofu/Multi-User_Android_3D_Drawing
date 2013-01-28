@@ -31,9 +31,3 @@ void CamInfo::setCamRot(osg::Quat rot)
 {
 	CamRot.set(rot.x(),rot.y(),rot.z(),rot.w());
 }
-/*
-void CamInfo::setActGeodeInfo(int pickedArea,int pickedActGeode,bool NewAGeode)
-{
-
-}
-*/

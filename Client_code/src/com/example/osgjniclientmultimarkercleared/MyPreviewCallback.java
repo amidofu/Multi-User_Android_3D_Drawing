@@ -1,13 +1,8 @@
 package com.example.osgjniclientmultimarkercleared;
 import nativeFunctions.NativeLib;
-
-//import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
-
-//import android.graphics.Bitmap;
-//import android.graphics.Canvas;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
 import android.util.Log;

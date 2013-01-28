@@ -64,7 +64,6 @@ USE_SERIALIZER_WRAPPER_LIBRARY(osgVolume)
 #define TaxisX 0
 #define TaxisY 1
 #define TaxisZ 2
-//template<class T>
 class osgMain{
 public:
 

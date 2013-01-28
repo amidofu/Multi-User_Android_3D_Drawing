@@ -4,7 +4,6 @@ PolytopePickHandler::PolytopePickHandler()
 {
     _mx=0.0;
     _my=0.0;
-    //NewAction=false;
     NodeForSendSelected=false;
     selected=false;
 }
@@ -104,10 +103,4 @@ osg::Node* PolytopePickHandler::getOrCreateSelectionBox()
 bool PolytopePickHandler::NodeSelected()
 {
 	return selected;
-	/*
-	if(currentSelectedNode==NULL)
-		return false;
-	else
-		return true;
-	*/
 }

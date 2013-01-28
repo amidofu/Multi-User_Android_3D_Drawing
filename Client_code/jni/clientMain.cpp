@@ -1,8 +1,6 @@
 #include "clientMain.h"
 Client::Client()
 {
-	//firstRead=true;
-	//translation[0]=translation[1]=translation[2]=0.0f;
 }
 void Client::startClient()
 {
@@ -77,11 +75,8 @@ void Client::connectServer()
 }
 void Client::sendMSG()
 {
-	//Send "Hello";
-	//if ( (numbytes = write(client, "hello!", strlen("hello!")) )== -1 ){
 	if ( (numbytes = send(client_skt, "hello!", strlen("hello!"),0) )== -1 ){
 		__android_log_print(ANDROID_LOG_ERROR,"jni client","send error");
-		//exit(1);
 	}
 	//__android_log_print(ANDROID_LOG_INFO,"jni client","send %d bytes",numbytes);
 
@@ -89,10 +84,8 @@ void Client::sendMSG()
 void Client::recvMSG()
 {
 	//Receive from server
-	//if ( (numbytes = read(client, buf, strlen(buf)) ) == -1 ){
 	if ( (numbytes = recv(client_skt, buf, bufferSize,0) ) == -1 ){
 		__android_log_print(ANDROID_LOG_ERROR,"jni client","recv error");
-		//exit(1);
 	}
 	//__android_log_print(ANDROID_LOG_INFO,"jni client","read %d bytes",numbytes);
 	buf[numbytes] = '\0';
@@ -104,10 +97,8 @@ void Client::recvMSG()
 }
 void Client::sendMSG(char* buf,size_t bufSize)
 {
-	//if ( (numbytes = send(client_skt, buf, strlen(buf),0) )== -1 ){
 	if ( (numbytes = send(client_skt, buf, bufSize,0) )== -1 ){
 		__android_log_print(ANDROID_LOG_ERROR,"jni client","max size limited send error");
-		//exit(1);
 	}
 	//__android_log_print(ANDROID_LOG_INFO,"jni client","buf size: %d",strlen(buf));
 	//__android_log_print(ANDROID_LOG_INFO,"jni client","sendMSG2 send %d bytes",numbytes);
@@ -116,18 +107,14 @@ void Client::recvMSG2()
 {
 	if ( (numbytes = recv(client_skt, buf, bufferSize,0) ) == -1 ){
 		__android_log_print(ANDROID_LOG_ERROR,"jni client","recv error");
-		//exit(1);
 	}
 	//__android_log_print(ANDROID_LOG_INFO,"jni client","recvMSG2 read %d bytes",numbytes);
-	//buf[numbytes] = '\0';
 }
 
 void Client::sendMSG(int &numBytes)
 {
-	//if ( (numbytes = send(client_skt, buf, strlen(buf),0) )== -1 ){
 	if ( (numbytes = send(client_skt, buf, bufferSize,0) )== -1 ){
 		__android_log_print(ANDROID_LOG_ERROR,"jni client","get numbytes send error");
-		//exit(1);
 	}
 	//__android_log_print(ANDROID_LOG_INFO,"jni client","sendMSG2 send %d bytes",numbytes);
 	numBytes=numbytes;
@@ -137,7 +124,6 @@ void Client::recvMSG(int MaxNumBytes)
 	//__android_log_print(ANDROID_LOG_INFO,"jni client","recvMSG2 read 1");
 	if ( (numbytes = recv(client_skt, buf, MaxNumBytes,0) ) == -1 ){
 		__android_log_print(ANDROID_LOG_ERROR,"jni client","max limited recv error");
-		//exit(1);
 	}
 	//__android_log_print(ANDROID_LOG_INFO,"jni client","recvMSG2 read 2");
 	//__android_log_print(ANDROID_LOG_INFO,"jni client","recvMSG2 read %d bytes",numbytes);
@@ -168,7 +154,6 @@ bool Client::sendLongBuffer(char* & buf, int arraylength)
 }
 bool Client::recvLongBuffer(char* & buffer, int arraylength)
 {
-	//free(buf);
 	buffer=new char[arraylength];
 	int size=4096;
 	char b[size];
@@ -176,7 +161,6 @@ bool Client::recvLongBuffer(char* & buffer, int arraylength)
 	int bytesleft=arraylength;
 	int n;
 	__android_log_print(ANDROID_LOG_INFO,"jni client","in recvLongBuffer, arraylendght:%d",arraylength);
-	//int i=1;
 	int numBytesToRead;
 	while(total<arraylength)
 	{
@@ -205,48 +189,7 @@ bool Client::recvLongBuffer(char* & buffer, int arraylength)
 		return false;
 
 }
-/*
-void Client::updateTrack()
-{
-    if ((numbytes = sendto(track_skt, trackBuf, strlen(trackBuf), 0,(struct sockaddr *)&track_addr, sizeof(track_addr))) == -1) {
-    	__android_log_print(ANDROID_LOG_ERROR,"jni clientTrack","send error");
-        exit(1);
-    }
-    //else
-    //	__android_log_print(ANDROID_LOG_INFO,"jni client Track","send %d bytes",numbytes);
 
-    int len=sizeof(track_addr);
-    if((numbytes=recvfrom(track_skt,trackRecvBuf,MatricesReadSize,0,(struct sockaddr *)&track_addr,&len))==-1){
-    	__android_log_print(ANDROID_LOG_ERROR,"jni client Track","recv error");
-    	//exit(1);
-    }
-    else
-    {
-    	////__android_log_print(ANDROID_LOG_INFO,"jni client Track","read %d bytes",numbytes);
-    	if(!firstRead)
-    	 {
-    		memcpy(TTmatrix,trackRecvBuf+MatrixNumber*MatrixSize,MatrixSize);
-    		//for(int i=0;i<4;i++)
-    		//__android_log_print(ANDROID_LOG_DEBUG,"jni client Track","recv matrix: %f, %f, %f, %f", TTmatrix[i*4],TTmatrix[i*4+1],TTmatrix[i*4+2],TTmatrix[i*4+3]);
-    		translation[0]=TTmatrix[3]-position[0];
-    		position[0]=TTmatrix[3];
-    		translation[1]=TTmatrix[7]-position[1];
-    		position[1]=TTmatrix[7];
-    		translation[2]=TTmatrix[11]-position[2];
-    		position[2]=TTmatrix[11];
-    	 }
-    	else
-    	{
-    		firstRead=false;
-    		memcpy(TTmatrix,trackRecvBuf,MatrixSize);
-    		position[0]=TTmatrix[3];
-    		position[1]=TTmatrix[7];
-    		position[2]=TTmatrix[11];
-    		translation[0]=translation[1]=translation[2]=0.0f;
-    	}
-    }
-}
-*/
 bool Client::sendINT(int in)
 {
 	char b[4];
@@ -274,16 +217,4 @@ bool Client::recvINT(int & out)
 		return true;
 	}
 }
-/*
-template <class T> void Client::storeSimpleStructIntoBuf(char* & buf,T & t)
-{
-	size_t s=sizeof(T);
-	buf=new char[s];
-	memcpy(buf,&t,s);
-}
-template <class T> void Client::loadSimpleStructFromBuf(char*  buf,T & t)
-{
-	size_t s=sizeof(T);
-	memcpy(&t,buf,s);
-}
-*/
+

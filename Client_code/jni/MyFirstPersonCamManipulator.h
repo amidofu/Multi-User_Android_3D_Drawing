@@ -10,10 +10,7 @@ public:
 	MyFirstPersonCamManipulator(float MoveSpeed);
 	MyFirstPersonCamManipulator();
 
-	
-	//void moveCameraByAcceleration(float x, float y, float z);
 	void rotateCameraByRotation(float axisX, float axisY, float axisZ, float angle);
-	//void moveCameraByDisplacement(float x,float y, float z);
 	virtual void home(double d);
 	virtual bool handleKeyDown(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &us);
 	osg::Vec3 getEye();
