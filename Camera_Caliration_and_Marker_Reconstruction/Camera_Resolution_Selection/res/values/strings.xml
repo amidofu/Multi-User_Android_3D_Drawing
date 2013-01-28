@@ -1,0 +1,8 @@
+<resources>
+
+    <string name="app_name">CameraResolutionSelect</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_cam_res_select">CamResSelectActivity</string>
+
+</resources>
