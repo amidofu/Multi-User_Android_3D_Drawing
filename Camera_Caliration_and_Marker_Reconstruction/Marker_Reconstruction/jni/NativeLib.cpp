@@ -118,14 +118,15 @@ JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_SaveNewMarkerFrame
     for(int j=0;j<NumRect;j++)//find the oldest built marker
     {
       int tempID=MR[j].MarkerID;
-      if(tempID==-1)
+      if(tempID==-1)//invalid marker
       	  continue;
       MSMap::iterator it;
-      it=mMSM.find(tempID);
+      it=mMSM.find(tempID);//check if the marker is found before
       if(it!=mMSM.end())
       {
        	  std::cout<<"found marker in mMSM. ID:"<<tempID<<std::endl;
           MS tempMS=it->second;
+          //find out the earlist reconstructed marker
           if(tempMS.buildTime<oldestAge)
           {
                 oldestAge=tempMS.buildTime;
@@ -155,12 +156,13 @@ JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_SaveNewMarkerFrame
      {
           int tempID=MR[oldestMarkerIndex].MarkerID;
           std::cout<<"found oldest ID:"<<tempID<<std::endl;
-          if(mMSM[tempID].valid)
+          if(mMSM[tempID].valid)//check if marker is valid
           {
                mMSM[tempID].EstimateTR(MR[oldestMarkerIndex].outer_corners,mCV.camera_mat,mCV.distort_mat,mCV.tempRot,mCV.tempTrans);
            }
            else
            {
+        	   //tell Java layer that the preview frame is not saved
   			  jboolean b=false;
   			  env->SetBooleanField(MarkerAssist,saveThisFrameID,b);
               return;
@@ -168,6 +170,7 @@ JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_SaveNewMarkerFrame
       }
       else
       {
+    	  //tell Java layer that the preview frame is not saved
 			  jboolean b=false;
 			  env->SetBooleanField(MarkerAssist,saveThisFrameID,b);
             return;
@@ -192,7 +195,7 @@ JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_SaveNewMarkerFrame
                 JNIMarkerID[JNIInd]=tempID;
                 JNINumImgsGot[JNIInd]=mMSM[tempID].numImgs;
             }
-            else
+            else//got a marker which has never been seen
             {
                 std::cout<<"found new MS, add image, ID:"<<tempID<<std::endl;
                 MS newMS(tempID);
@@ -233,6 +236,7 @@ JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_ComputeMarkerPosition
             {
             	bool tValid=mMSM[it->second.ID].valid;
             	//bool good=RANSACTriangulation(mMSM[it->second.ID],mCV.camera_mat,finalRansacTimes);
+            	//do the reconstruction
 #ifdef USE_REPROJ
             	bool good=RANSACTriangulationByReproj(numImgsToTriangulation,mMSM[it->second.ID],mCV.camera_mat,mCV.distort_mat);//check by reprojection
 #else

@@ -120,6 +120,7 @@ public class MyPreviewCallback implements PreviewCallback, Runnable{
 		Imgproc.cvtColor(mRgba, mRGB, Imgproc.COLOR_RGBA2RGB, 3);
 		if(SaveMarkerFrame&&!SaveMarkerFrameFinished)
 		{
+			//store the infomation about preview frame
 			NativeLib.SaveNewMarkerFrame(mRGB.getNativeObjAddr(),mHeight, mWidth, detectMarkerOneTime, FMA);
 			SaveMarkerFrame=false;
 			SaveMarkerFrameFinished=true;
@@ -144,7 +145,4 @@ public class MyPreviewCallback implements PreviewCallback, Runnable{
 		SaveMarkerFrame=true;
 		SaveMarkerFrameFinished=false;
 	}
-
-
-	
 }

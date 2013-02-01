@@ -9,20 +9,7 @@
 #include "CVAuxFunc.h"
 #include <time.h>
 using namespace cv;
-/*
-#define rotAxisX 0
-#define rotAxisY 1
-#define rotAxisZ 2
-#define rotAngle 3
-#define transX 4
-#define transY 5
-#define transZ 6
-#define ptXinJac 0
-#define ptYinJac 1
-#define ptXin3D 0
-#define ptYin3D 1
-#define ptZin3D 2
-*/
+
 float showAngle(Point3f center, Point3f p1, Point3f p2);
 void Point2fVectorToCvMat(std::vector<Point2f> & srcPt, CvMat* & dstPt,bool rowMajor);
 //get vector length
