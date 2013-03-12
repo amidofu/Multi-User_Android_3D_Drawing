@@ -81,3 +81,5 @@ void ComputeBoundingBoxByRotation(osg::BoundingBox & InOut,osg::Vec3 BBCenter,fl
     }
 	InOut.set(Tbb.xMin(),Tbb.yMin(),Tbb.zMin(),Tbb.xMax(),Tbb.yMax(),Tbb.zMax());
 }
+
+

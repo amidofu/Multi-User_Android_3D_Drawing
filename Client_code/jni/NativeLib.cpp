@@ -23,6 +23,7 @@ std::string storagePath;
 std::string OSGStoragePath;
 bool MarkerInsight=false;
 bool useSensor=false;
+bool fixVA=false;
 #define QUATLERP
 #ifdef QUATLERP
 std::vector<osg::Quat> quats;
@@ -170,6 +171,8 @@ JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_sendAndRecvAcceInfoToOther
 {
 	if(!osgmain.initialized)
 			return ;
+	//if(osgmain.startSendMainSceneGeodes||osgmain.recvingMainSceneGeodes)
+	//	return;
 	//prepare to send local camera info (pose) and other flags
 	osgmain.prepareSendCamInfo();
 	if(osgmain.sendingMainSceneGeodes||osgmain.recvingMainSceneGeodes)//check if other works are done
@@ -232,7 +235,7 @@ JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_sendAndRecvAcceInfoToOther
 	 //start draw line function in local, send the draw line command and the ID of the line Geode
 	 if(osgmain.toggleStartDrawLine&&osgmain.DrawLine)
 	 {
-		 __android_log_print(ANDROID_LOG_ERROR,"jni server","start draw line");
+		 __android_log_print(ANDROID_LOG_ERROR,"jni client","start draw line");
 		 osgmain.toggleStartDrawLine=false;
 		 int ID=osgmain.mRNumGeodeMap.find(osgmain.currentLineGeode)->second;
 		 client.sendINT(ID);
@@ -541,6 +544,10 @@ JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_mouseMoveEvent
 JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_sendRotation
 (JNIEnv *, jclass, jfloat axisX, jfloat axisY, jfloat neg_axisZ, jfloat angle)
 {
+	if(osgmain.startSendMainSceneGeodes||osgmain.recvingMainSceneGeodes)
+		return;
+	if(fixVA)
+		return;
 	if(useSensor)
 		osgmain.rotateCameraByRotation(axisX,neg_axisZ, axisY, angle);
 	osgmain.SelfCamInfo.setCamRot(osgmain.MFPCM->getRotation());
@@ -581,13 +588,6 @@ JNIEXPORT jboolean JNICALL Java_nativeFunctions_NativeLib_toggleEdit
 	osgmain.ToggleEditing();
 	b=true;
 	return b;
-}
-
-
-JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_EditR
-  (JNIEnv *, jclass, jint axis, jfloat amount)
-{
-	osgmain.edit(Rotation,axis,amount);
 }
 
 JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_Edit
@@ -646,6 +646,10 @@ JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_MarkerDetection
 (JNIEnv *, jclass, jlong addrRgba, jint height, jint width, jint RectLimit)
 {
 
+	if(osgmain.startSendMainSceneGeodes||osgmain.recvingMainSceneGeodes)
+		return;
+	if(fixVA)
+		return;
 	if(osgmain.sending)
 		return;
 	Mat* pMatRgb=(Mat*)addrRgba;
@@ -952,4 +956,10 @@ JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_loadScene
 		osgmain.addGeode(geode.get(),ID);
 	}
 	fp.close();
+}
+
+JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_fixViewAngle
+  (JNIEnv *, jclass)
+{
+	fixVA=!fixVA;
 }

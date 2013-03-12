@@ -186,6 +186,7 @@ public:
     osg::Matrixd editRotation;
     osg::Matrixd editTranslation;
     osg::Matrixd editScale;
+    float scaleX,scaleY,scaleZ;
     bool toggleEditing;
     bool editMode;
     bool editHost;
@@ -228,6 +229,8 @@ public:
 
     bool NodeSelected();
     bool sending;
+
+
 };
 
 /*

@@ -207,6 +207,14 @@ JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_saveScene
 JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_loadScene
   (JNIEnv *, jclass, jstring);
 
+/*
+ * Class:     nativeFunctions_NativeLib
+ * Method:    fixViewAngle
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_fixViewAngle
+  (JNIEnv *, jclass);
+
 #ifdef __cplusplus
 }
 #endif

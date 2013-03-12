@@ -21,27 +21,10 @@ MarkerRectangle* MR;
 MSMap mMSM;
 std::string storagePath;
 std::string OSGStoragePath;
-//markerless part
-//#define MARKERLESS_PART
-//KeyFrame testKF;
-/*
-double sigma1=1.0;
-double sigma2=0.0;
-int fastTh=100;
-double binTh=100.0;
-TermCriteria criteria(TermCriteria::COUNT+TermCriteria::EPS,30,10E-4);
-Size GaussSize(5,5);
-Size winSize(11,11);
-double derivLambda = 0.5;
-double minEigTh=10E-4;
-int LKFlag=0;
-double FundConfi=0.99;
-double FundDist=3.0;
-int maxLevel=3;
-*/
+
 bool MarkerInsight=false;
 bool useSensor=false;
-//end markerless
+bool fixVA=false;
 
 #define QUATLERP
 #ifdef QUATLERP
@@ -182,6 +165,8 @@ JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_sendAndRecvAcceInfoToOther
 {
 	if(!osgmain.initialized)
 			return ;
+	//if(osgmain.startSendMainSceneGeodes||osgmain.recvingMainSceneGeodes)
+	//	return;
 	osgmain.prepareSendCamInfo();
 	if(osgmain.startSendNode)
 		osgmain.prepareSendNode();
@@ -216,14 +201,19 @@ JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_sendAndRecvAcceInfoToOther
 
 		 for(int i=0;i<numChildren;i++)
 		 {
+			 __android_log_print(ANDROID_LOG_INFO,"jni server","get %d child",i);
 			 osg::Geode* child=osgmain.mainSceneGeodes->getChild(i)->asGeode();
+			 __android_log_print(ANDROID_LOG_INFO,"jni server","prepare %d child",i);
 			 osgmain.prepareSendNode(child,numBytes);
+			 __android_log_print(ANDROID_LOG_INFO,"jni server","prepare %d child ok",i);
 			 if(!server.sendINT(numBytes))
 			 {
 				 __android_log_print(ANDROID_LOG_ERROR,"jni server","send num bytes error");
 				 return;
 			 }
+			 __android_log_print(ANDROID_LOG_INFO,"jni server","send %d child",i);
 			 server.sendLongBuffer(osgmain.sendNodeBuffer, numBytes);
+			 __android_log_print(ANDROID_LOG_INFO,"jni server","send %d child ok",i);
 			 int ID=osgmain.mRNumGeodeMap.find(child)->second;
 			 if(!server.sendINT(ID))
 			 {
@@ -276,6 +266,8 @@ JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_sendAndRecvAcceInfoToOther
 		 //__android_log_print(ANDROID_LOG_ERROR,"jni client","edit mat %f, %f, %f, %f",mat(2,0),mat(2,1),mat(2,2),mat(2,3));
 		 //__android_log_print(ANDROID_LOG_ERROR,"jni client","edit mat %f, %f, %f, %f",mat(3,0),mat(3,1),mat(3,2),mat(3,3));
 		 server.sendMSG(buft,4*4*4);
+		 delete []buft;
+		 buft=0;
 	 }
 
 	 if(osgmain.deleteGeode)
@@ -312,7 +304,8 @@ JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_sendAndRecvAcceInfoToOther
 			 }//finish store one marker
 			 server.sendLongBuffer(b, 4+4+4*3*4);
 		 }
-		 free(b);
+		 delete []b;
+		 b=0;
 		 osgmain.selfC.sendMarkers=false;
 	 }
 	 if(osgmain.selfC.addBox)
@@ -340,7 +333,8 @@ JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_sendAndRecvAcceInfoToOther
 			 int arraylength=osgmain.otherC.numBytesofNode;
 			 server.recvLongBuffer(read, arraylength);
 			 osgmain.readRecvNode(read);
-			 free(read);
+			 delete []read;
+			 read=0;
 			 osgmain.RecvingGeometry=false;
 		 }
 		 if(osgmain.otherC.startSendMainScene)
@@ -378,7 +372,8 @@ JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_sendAndRecvAcceInfoToOther
 				 server.recvINT(ID);
 				 //__android_log_print(ANDROID_LOG_INFO,"jni server","recv scene ID %d",ID);
 				 mapIDAndGeode(ID,Rgeode,osgmain.mNumGeodeMap,osgmain.mRNumGeodeMap);
-				 free(read);
+				 delete []read;
+				 read=0;
 
 			 }
 			 osgmain.recvingMainSceneGeodes=false;
@@ -483,7 +478,8 @@ JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_sendAndRecvAcceInfoToOther
 				 MS M(pts,ID);
 				 M.buildTime=age;
 				 mMSM.insert(MSPair(ID,M));
-				 free(b);
+				 delete []b;
+				 b=0;
 			 }
 		 }
 		 if(osgmain.otherC.addBox)
@@ -499,7 +495,8 @@ JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_sendAndRecvAcceInfoToOther
 			 osg::Vec4 color(osgmain.otherC.selfColorR,osgmain.otherC.selfColorG,osgmain.otherC.selfColorB,1.0);
 			 osgmain.changeColorForOneGeode(ID,color);
 		 }
-		 free(buf);
+		 delete []buf;
+		 buf=0;
 	 }
 
 }
@@ -543,6 +540,10 @@ JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_mouseMoveEvent
 JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_sendRotation
 (JNIEnv *, jclass, jfloat axisX, jfloat axisY, jfloat neg_axisZ, jfloat angle)
 {
+	if(osgmain.startSendMainSceneGeodes||osgmain.recvingMainSceneGeodes)
+		return;
+	if(fixVA)
+		return;
 	if(useSensor)
 	{
 		osgmain.rotateCameraByRotation(axisX,neg_axisZ, axisY, angle);
@@ -664,25 +665,14 @@ JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_changeColor
 	}
 }
 
-JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_FindFeatures
-  (JNIEnv *, jclass, jlong addrGray, jlong addrRgba)
-{
-
-    Mat* pMatGr=(Mat*)addrGray;
-    Mat* pMatRgb=(Mat*)addrRgba;
-    vector<KeyPoint> v;
-
-    FastFeatureDetector detector(50);
-    detector.detect(*pMatGr, v);
-    for( size_t i = 0; i < v.size(); i++ )
-        circle(*pMatRgb, Point(v[i].pt.x, v[i].pt.y), 10, Scalar(255,0,0,255));
-
-}
-
 JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_MarkerDetection
 (JNIEnv *, jclass, jlong addrRgba, jint height, jint width, jint RectLimit)
 {
 
+	if(osgmain.startSendMainSceneGeodes||osgmain.recvingMainSceneGeodes)
+		return;
+	if(fixVA)
+		return;
 	if(osgmain.sending)
 		return;
 	Mat* pMatRgb=(Mat*)addrRgba;
@@ -976,4 +966,10 @@ JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_loadScene
 		osgmain.addGeode(geode.get(),ID);
 	}
 	fp.close();
+}
+
+JNIEXPORT void JNICALL Java_nativeFunctions_NativeLib_fixViewAngle
+  (JNIEnv *, jclass)
+{
+	fixVA=!fixVA;
 }

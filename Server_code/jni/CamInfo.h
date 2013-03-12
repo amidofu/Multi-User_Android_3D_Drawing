@@ -14,6 +14,6 @@ public:
 	void setCamRot(float rox,float roy,float roz,float angle);
 	void setCamRot(osg::Quat rot);
 	void setCamPos(float posx,float posy, float posz);
-	//void setActGeodeInfo(int pickedArea,int pickedActGeode,bool NewAGeode);
+
 
 };

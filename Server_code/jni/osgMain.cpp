@@ -41,6 +41,7 @@ osgMain::osgMain()
 
     lastNewID=0;
     sending=false;
+    scaleX=scaleY=scaleZ=1.0;
 
 }
 void osgMain::draw()
@@ -262,9 +263,15 @@ void osgMain::prepareSendNode(osg::Node * node,int & numBytes)
 	std::stringstream stst;
 	osg::ref_ptr<osgDB::ReaderWriter> rw=osgDB::Registry::instance()->getReaderWriterForExtension("osg");
 	rw->writeNode(*node,stst);
+	__android_log_print(ANDROID_LOG_INFO,"jni server","write node ok");
 	unsigned long arrayLength=stst.str().length();
+	__android_log_print(ANDROID_LOG_INFO,"jni server","node byte :%d",arrayLength);
+	delete []sendNodeBuffer;
+	__android_log_print(ANDROID_LOG_INFO,"jni server","delete sendNodeBuffer ok");
 	sendNodeBuffer=new char[arrayLength];
+	__android_log_print(ANDROID_LOG_INFO,"jni server","sendNodeBuffer create ok");
 	strcpy(sendNodeBuffer,stst.str().c_str());
+	__android_log_print(ANDROID_LOG_INFO,"jni server","sendNodeBuffer copy ok");
 	numBytes=arrayLength;
 }
 void osgMain::readRecvNode(char* readNode)
@@ -317,8 +324,8 @@ void osgMain::toggleDrawLine(int ID,osg::Vec4 color)
 	    mat->setDiffuse(osg::Material::FRONT_AND_BACK,color);
 	    currentLineGeode->getOrCreateStateSet()->setAttributeAndModes(mat.get());
 	    currentLineGeode->getOrCreateStateSet()->setMode(GL_CULL_FACE,osg::StateAttribute::OFF);
-		mapIDAndGeode(ID,currentLineGeode,mNumGeodeMap,mRNumGeodeMap);
-		mainSceneGeodes->addChild(currentLineGeode);
+			mapIDAndGeode(ID,currentLineGeode,mNumGeodeMap,mRNumGeodeMap);
+			mainSceneGeodes->addChild(currentLineGeode);
 
 		LineStart=true;
 	}
@@ -477,6 +484,7 @@ void osgMain::finishEditing()
 	editTranslation.identity();
 	editScale.identity();
     editTransform->setMatrix(osg::Matrixd::identity());
+    scaleX=scaleY=scaleZ=1.0;
     swapDrawbles(editing,editGeometry);
 }
 void osgMain::swapDrawbles(osg::Drawable* drawable1, osg::Drawable* drawable2)
@@ -576,27 +584,78 @@ void osgMain::edit(int type,int axis,float amount)
 		break;
 	case Scale:
 		float nAmount;
+		osg::BoundingBox bb=editing->getBound();
+		float x=bb.xMax()-bb.xMin();
+		float y=bb.yMax()-bb.yMin();
+		float z=bb.zMax()-bb.zMin();
 		if(amount>0.0)
 			nAmount=1.0+amount;
 		else if(amount<0.0)
 			nAmount=1.0/(1.0-amount);
 		else
 			break;
+
+		float ss=0.5;
+		amount*=ss;
+
 		switch(axis)
 		{
 		case TaxisX:
-			editScale.preMult(osg::Matrixd::scale((double)nAmount,1.0,1.0));
-			updateEditTransform();
+
+			if(amount>0.0)
+				scaleX+=amount;
+			else if(amount<0.0)
+			{
+				if(scaleX+amount>0.0)
+					scaleX+=amount;
+				else
+				scaleX*=(1.0/(1.0-amount));
+			}
+			else
+				break;
+
 			break;
 		case TaxisY:
-			editScale.preMult(osg::Matrixd::scale(1.0,(double)nAmount,1.0));
-			updateEditTransform();
+
+			if(amount>0.0)
+				scaleY+=amount;
+			else if(amount<0.0)
+			{
+				if(scaleY+amount>0.0)
+					scaleY+=amount;
+				else
+				scaleY*=(1.0/(1.0-amount));
+			}
+			else
+				break;
+
 			break;
 		case TaxisZ:
-			editScale.preMult(osg::Matrixd::scale(1.0,1.0,(double)nAmount));
-			updateEditTransform();
+
+			if(amount>0.0)
+				scaleZ+=amount;
+			else if(amount<0.0)
+			{
+				if(scaleZ+amount>0.0)
+					scaleZ+=amount;
+				else
+				scaleZ*=(1.0/(1.0-amount));
+			}
+			else
+				break;
+
 			break;
 		}
+		osg::Matrix mX,mY,mZ,mS;
+		mX.set(osg::Matrixd::scale(scaleX,1,1));
+		mY.set(osg::Matrixd::scale(1,scaleY,1));
+		mZ.set(osg::Matrixd::scale(1,1,scaleZ));
+		mS.set(osg::Matrixd::identity());
+		mS.preMult(mX);
+		mS.preMult(mY);
+		mS.preMult(mZ);
+		editScale.set(mS);
+		updateEditTransform();
 		break;
 	}
 }

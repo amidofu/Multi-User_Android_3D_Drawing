@@ -7,4 +7,6 @@
 osg::ref_ptr<osg::Geode> Trapzoid(osg::Vec4 & color);
 osg::ref_ptr<osg::Geode> Triangle(osg::Vec4 & color,float offset);
 void ComputeBoundingBoxByRotation(osg::BoundingBox & InOut,osg::Vec3 BBCenter,float BBSize,osg::Matrixd Rotation);
+
+
 #endif

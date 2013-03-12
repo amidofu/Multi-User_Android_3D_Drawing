@@ -36,6 +36,7 @@ osgMain::osgMain()
     lastNewID=0;
     changeColor=false;
     sending =false;
+    scaleX=scaleY=scaleZ=1.0;
 }
 void osgMain::draw()
 {
@@ -456,6 +457,7 @@ void osgMain::finishEditing()
 	editTranslation.identity();
 	editScale.identity();
     editTransform->setMatrix(osg::Matrixd::identity());
+    scaleX=scaleY=scaleZ=1.0;
     swapDrawbles(editing,editGeometry);
 }
 void osgMain::swapDrawbles(osg::Drawable* drawable1, osg::Drawable* drawable2)
@@ -563,30 +565,80 @@ void osgMain::edit(int type,int axis,float amount)
 		}
 		break;
 	case Scale:
-		__android_log_print(ANDROID_LOG_ERROR,"jni client","edit type: %d, axis: %d, amount: %f", type,axis, amount);
+
 		float nAmount;
-		if(amount>0.0)
-			nAmount=1.0+amount;
-		else if(amount<0.0)
-			nAmount=1.0/(1.0-amount);
-		else
-			break;
-		switch(axis)
-		{
-		case TaxisX:
-			editScale.preMult(osg::Matrixd::scale((double)nAmount,1.0,1.0));
-			updateEditTransform();
-			break;
-		case TaxisY:
-			editScale.preMult(osg::Matrixd::scale(1.0,(double)nAmount,1.0));
-			updateEditTransform();
-			break;
-		case TaxisZ:
-			editScale.preMult(osg::Matrixd::scale(1.0,1.0,(double)nAmount));
-			updateEditTransform();
-			break;
-		}
-		break;
+				//new part
+				osg::BoundingBox bb=editing->getBound();
+				float x=bb.xMax()-bb.xMin();
+				float y=bb.yMax()-bb.yMin();
+				float z=bb.zMax()-bb.zMin();
+				if(amount>0.0)
+					nAmount=1.0+amount;
+				else if(amount<0.0)
+					nAmount=1.0/(1.0-amount);
+				else
+					break;
+
+				float ss=0.5;
+				amount*=ss;
+
+				switch(axis)
+				{
+				case TaxisX:
+
+					if(amount>0.0)
+						scaleX+=amount;
+					else if(amount<0.0)
+					{
+						if(scaleX+amount>0.0)
+							scaleX+=amount;
+						else
+						scaleX*=(1.0/(1.0-amount));
+					}
+					else
+						break;
+					break;
+				case TaxisY:
+
+					if(amount>0.0)
+						scaleY+=amount;
+					else if(amount<0.0)
+					{
+						if(scaleY+amount>0.0)
+							scaleY+=amount;
+						else
+						scaleY*=(1.0/(1.0-amount));
+					}
+					else
+						break;
+					break;
+				case TaxisZ:
+
+					if(amount>0.0)
+						scaleZ+=amount;
+					else if(amount<0.0)
+					{
+						if(scaleZ+amount>0.0)
+							scaleZ+=amount;
+						else
+						scaleZ*=(1.0/(1.0-amount));
+					}
+					else
+						break;
+					break;
+				}
+				osg::Matrix mX,mY,mZ,mS;
+				mX.set(osg::Matrixd::scale(scaleX,1,1));
+				mY.set(osg::Matrixd::scale(1,scaleY,1));
+				mZ.set(osg::Matrixd::scale(1,1,scaleZ));
+				mS.set(osg::Matrixd::identity());
+				mS.preMult(mX);
+				mS.preMult(mY);
+				mS.preMult(mZ);
+				editScale.set(mS);
+				updateEditTransform();
+
+				break;
 	}
 }
 void osgMain::storeMatrixIntoBuf(char* & buf, osg::Matrixd mat)
