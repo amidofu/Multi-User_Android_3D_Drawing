@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Scanner;
+
 import nativeFunctions.CommonFuncAndConst;
 import nativeFunctions.NativeLib;
 import android.annotation.SuppressLint;
@@ -85,6 +86,10 @@ public class OSGActivity extends Activity implements OnTouchListener{
 	ChangeColorUI setColorUI;
 	
 	Button changeColor;//change the color of geometry to selected color
+	
+	Button fixViewAngle;
+	boolean fixVA;
+	
     //used for record coordinate of touch screen 
 	float pX;
     float pY;
@@ -151,7 +156,10 @@ public class OSGActivity extends Activity implements OnTouchListener{
         
         changeColor=(Button)findViewById(R.id.ChangeColor);
         changeColor.setOnClickListener(pressChangeColor);
-	        
+	      
+        fixViewAngle=(Button)findViewById(R.id.fixViewAngle);
+        fixViewAngle.setOnClickListener(pressFixVA);
+        fixVA=false;
 	        
 	        SELgyroscope=new SensorEventListener(){
 
@@ -405,6 +413,22 @@ public class OSGActivity extends Activity implements OnTouchListener{
 			}
 			
 		};
+		
+		private OnClickListener pressFixVA=new OnClickListener()
+		{
+
+			@Override
+			public void onClick(View v) {
+				NativeLib.fixViewAngle();
+				fixVA=!fixVA;
+				if(fixVA)
+					fixViewAngle.setTextColor(Color.RED);
+				else
+					fixViewAngle.setTextColor(Color.BLACK);
+			}
+			
+		};
+		
 	    @Override
 	    public void onBackPressed(){
 	        mCamera.stopPreview();

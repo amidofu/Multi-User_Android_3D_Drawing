@@ -5,8 +5,6 @@ public class NativeLib {
 	static {
 		System.loadLibrary("NativeLib");
 	}
-	public static native void initServer();
-	public static native void sendAndRecvAcceInfoToOther();
 	
 	//OSG Functions
 	public static native void OSGRun();
@@ -37,5 +35,5 @@ public class NativeLib {
 	native public static void saveScene(String OSGPath);
 	native public static void loadScene(String OSGPath);
 	native public static void fixViewAngle();
-	
+	native public static void DrawChara();
 }

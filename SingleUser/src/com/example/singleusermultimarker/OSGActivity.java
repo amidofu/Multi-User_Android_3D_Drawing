@@ -1,5 +1,4 @@
-package com.example.osgjniservermultimarkercleared;
-
+package com.example.singleusermultimarker;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -7,7 +6,6 @@ import java.io.FileReader;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Timer;
-
 import nativeFunctions.CommonFuncAndConst;
 import nativeFunctions.NativeLib;
 import android.app.Activity;
@@ -37,7 +35,6 @@ public class OSGActivity extends Activity implements OnTouchListener{
 	Sensor Gyroscope;
 	String storageFolder;
 	String OSGstorageFolder; 
-	private SensorEventListener SELaccelerometer;
 	private SensorEventListener SELgyroscope;
 	//not used
 	private final float[] deltaRotationVector = new float[4];
@@ -149,28 +146,7 @@ public class OSGActivity extends Activity implements OnTouchListener{
         fixViewAngle=(Button)findViewById(R.id.fixViewAngle);
         fixViewAngle.setOnClickListener(pressFixVA);
         fixVA=false;
-        
-        //Accelerometer is not used now
-        /*
-        SELaccelerometer = new SensorEventListener(){
-			@Override
-			public void onAccuracyChanged(Sensor sensor, int accuracy) {
-				// TODO Auto-generated method stub
-			}
-			@Override
-			public void onSensorChanged(SensorEvent event) {
-				// TODO Auto-generated method stub
-                
-                float[] values = event.values;
-                float x=values[0];
-                float y=values[1];
-                float z=values[2];
-                osgNativeLib.sendAcceleration(x, -z, y, dT)
-                
-			}
-        	
-        };
-        */
+        		
         
         SELgyroscope=new SensorEventListener(){
 
@@ -375,6 +351,22 @@ public class OSGActivity extends Activity implements OnTouchListener{
 		}
 		
 	};
+	
+	private OnClickListener pressFixVA=new OnClickListener()
+	{
+
+		@Override
+		public void onClick(View v) {
+			NativeLib.fixViewAngle();
+			fixVA=!fixVA;
+			if(fixVA)
+				fixViewAngle.setTextColor(Color.RED);
+			else
+				fixViewAngle.setTextColor(Color.BLACK);
+		}
+		
+	};
+	
 
 	private class MoveForwardTouch implements OnTouchListener{
 
@@ -443,22 +435,6 @@ public class OSGActivity extends Activity implements OnTouchListener{
 		}
 		
 	};
-	
-	private OnClickListener pressFixVA=new OnClickListener()
-	{
-
-		@Override
-		public void onClick(View v) {
-			NativeLib.fixViewAngle();
-			fixVA=!fixVA;
-			if(fixVA)
-				fixViewAngle.setTextColor(Color.RED);
-			else
-				fixViewAngle.setTextColor(Color.BLACK);
-		}
-		
-	};
-	
     public void onBackPressed(){
 		finish();
     }
@@ -525,10 +501,9 @@ public class OSGActivity extends Activity implements OnTouchListener{
 	public boolean onCreateOptionsMenu(Menu menu){
 		menu.add(Menu.NONE,Menu.FIRST+1,1,"Reset View");
 		menu.add(Menu.NONE,Menu.FIRST+2,2,"Reset Rotation");
-		menu.add(Menu.NONE,Menu.FIRST+3,3,"Send Scene");
-		menu.add(Menu.NONE,Menu.FIRST+4,4,"Send Marker");	
-		menu.add(Menu.NONE,Menu.FIRST+5,5,"Load Scene");
-		menu.add(Menu.NONE,Menu.FIRST+6,6,"Save Scene");
+		menu.add(Menu.NONE,Menu.FIRST+3,3,"Load Scene");
+		menu.add(Menu.NONE,Menu.FIRST+4,4,"Save Scene");
+		menu.add(Menu.NONE,Menu.FIRST+5,5,"Draw Chara");
 		return true;
 		
 	}
@@ -544,19 +519,14 @@ public class OSGActivity extends Activity implements OnTouchListener{
 		case Menu.FIRST+2:
 			NativeLib.sendKeyDown('r');
 			break;
-			
 		case Menu.FIRST+3:
-			NativeLib.sendMainScene();
-			break;
-			
-		case Menu.FIRST+4:
-			NativeLib.sendSMarker();
-			break;
-		case Menu.FIRST+5:
 			NativeLib.loadScene(OSGstorageFolder);
 			break;
-		case Menu.FIRST+6:
+		case Menu.FIRST+4:
 			NativeLib.saveScene(OSGstorageFolder);
+			break;
+		case Menu.FIRST+5:
+			NativeLib.DrawChara();
 			break;
 		}
 		return false;

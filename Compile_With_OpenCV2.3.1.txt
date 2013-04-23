@@ -1,0 +1,12 @@
+Setup OpenCV library:
+1.Please download OpenCV 2.3.1 for Android from here: http://opencv.org/downloads.html
+  Then please unzip OpenCV
+
+2.In Eclipse, File -> Import -> Existing Projects into Workspace -> find the directory that includes src folder in OpenCV (e.g. username/OpenCV-2.3.1/src)
+
+3. Next until finish
+
+Using library for Android project:
+1.Right click the project in Eclipse 
+
+2.Property -> Android -> Add (in the Library section) -> select the libraray you want to use -> Apply -> OK

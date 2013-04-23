@@ -71,4 +71,6 @@ public class NativeLib {
     native public static void saveScene(String OSGPath);
 	//load created geometries
     native public static void loadScene(String OSGPath);
+    
+    native public static void fixViewAngle();
 }

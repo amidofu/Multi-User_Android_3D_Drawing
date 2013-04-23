@@ -1,4 +1,4 @@
-package com.example.osgjniservermultimarkercleared;
+package com.example.singleusermultimarker;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 

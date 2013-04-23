@@ -47,6 +47,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Set Color" />
+                                                <Button
+                            android:id="@+id/fixViewAngle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="FixVA" />
         
         </LinearLayout>
             <LinearLayout
